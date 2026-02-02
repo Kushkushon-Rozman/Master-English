@@ -1,5 +1,6 @@
 /* ============================================
-   Notion-Style Design for English Speaking Mastery
+   Desert Theme Design for English Speaking Mastery
+   Soft, warm colors inspired by desert landscapes
    ============================================ */
 
 /* Reset and Base Styles */
@@ -11,38 +12,38 @@
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', 'Arial', sans-serif;
-    background-color: #ffffff;
-    color: #37352f;
+    background-color: #FAF7F0;
+    color: #5A4A3C;
     line-height: 1.6;
     font-size: 14px;
 }
 
-/* Header - Notion Style */
+/* Header - Desert Style */
 header {
-    background-color: #ffffff;
+    background-color: #FFFEF9;
     padding: 12px 24px;
-    border-bottom: 1px solid #e9e9e7;
+    border-bottom: 1px solid #E8DCC8;
     position: sticky;
     top: 0;
     z-index: 100;
     backdrop-filter: blur(10px);
-    background-color: rgba(255, 255, 255, 0.95);
+    background-color: rgba(255, 254, 249, 0.95);
 }
 
 header h1 {
-    color: #37352f;
+    color: #5A4A3C;
     font-size: 16px;
     font-weight: 600;
     letter-spacing: -0.01em;
 }
 
 header p {
-    color: #787774;
+    color: #8B7B6C;
     margin-top: 2px;
     font-size: 12px;
 }
 
-/* Main Container - Notion-style Layout */
+/* Main Container */
 .container {
     display: flex;
     max-width: 100%;
@@ -51,11 +52,11 @@ header p {
     min-height: calc(100vh - 49px);
 }
 
-/* Left Sidebar - Notion Style */
+/* Left Sidebar - Desert Style */
 .topics-sidebar {
     width: 240px;
-    background-color: #f7f6f3;
-    border-right: 1px solid #e9e9e7;
+    background-color: #F5EFE6;
+    border-right: 1px solid #E8DCC8;
     padding: 16px 8px;
     height: calc(100vh - 49px);
     position: sticky;
@@ -68,7 +69,7 @@ header p {
     font-weight: 600;
     margin-bottom: 8px;
     padding: 4px 12px;
-    color: #787774;
+    color: #8B7B6C;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
@@ -86,17 +87,17 @@ header p {
     display: flex;
     align-items: center;
     font-size: 14px;
-    color: #37352f;
+    color: #5A4A3C;
     user-select: none;
 }
 
 .topic-item:hover {
-    background-color: rgba(0, 0, 0, 0.03);
+    background-color: rgba(212, 133, 106, 0.08);
 }
 
 .topic-item.active {
-    background-color: rgba(35, 131, 226, 0.08);
-    color: #2383e2;
+    background-color: rgba(212, 133, 106, 0.15);
+    color: #C77D5F;
 }
 
 .topic-number {
@@ -105,23 +106,23 @@ header p {
     justify-content: center;
     width: 20px;
     height: 20px;
-    background-color: rgba(0, 0, 0, 0.04);
+    background-color: #EDD5C8;
     border-radius: 3px;
     margin-right: 8px;
     font-size: 11px;
     font-weight: 500;
-    color: #787774;
+    color: #8B7B6C;
 }
 
 .topic-item.active .topic-number {
-    background-color: #2383e2;
+    background-color: #D4856A;
     color: white;
 }
 
-/* Middle Section - Notion Content Style */
+/* Middle Section - Desert Content Style */
 .learning-section {
     flex: 1;
-    background-color: #ffffff;
+    background-color: #FAF7F0;
     padding: 48px 96px;
     max-width: 900px;
     margin: 0 auto;
@@ -129,7 +130,7 @@ header p {
 }
 
 .learning-section h2 {
-    color: #37352f;
+    color: #5A4A3C;
     font-size: 32px;
     font-weight: 700;
     margin-bottom: 8px;
@@ -138,14 +139,14 @@ header p {
 }
 
 .learning-section .description {
-    color: #787774;
+    color: #8B7B6C;
     margin-bottom: 32px;
     font-size: 16px;
     line-height: 1.6;
 }
 
 .videos-section h3 {
-    color: #37352f;
+    color: #5A4A3C;
     margin-bottom: 16px;
     font-size: 18px;
     font-weight: 600;
@@ -158,30 +159,30 @@ header p {
     gap: 16px;
 }
 
-/* YouTube Video Card - Notion Style */
+/* YouTube Video Card - Desert Style */
 .video-card {
-    border: 1px solid #e9e9e7;
+    border: 1px solid #E8DCC8;
     border-radius: 6px;
     padding: 16px;
-    background-color: #ffffff;
+    background-color: #FFFEF9;
     transition: all 0.15s ease;
 }
 
 .video-card:hover {
-    box-shadow: rgba(15, 15, 15, 0.1) 0px 0px 0px 1px,
-                rgba(15, 15, 15, 0.1) 0px 2px 4px;
-    border-color: #d3d3d1;
+    box-shadow: rgba(90, 74, 60, 0.08) 0px 0px 0px 1px,
+                rgba(90, 74, 60, 0.08) 0px 2px 4px;
+    border-color: #D4C4B0;
 }
 
 .video-card h4 {
-    color: #37352f;
+    color: #5A4A3C;
     margin-bottom: 4px;
     font-size: 16px;
     font-weight: 600;
 }
 
 .video-card p {
-    color: #787774;
+    color: #8B7B6C;
     font-size: 14px;
     margin-bottom: 12px;
 }
@@ -193,7 +194,7 @@ header p {
     height: 0;
     overflow: hidden;
     border-radius: 4px;
-    background-color: #000;
+    background-color: #5A4A3C;
 }
 
 .video-embed iframe {
@@ -205,11 +206,11 @@ header p {
     border: none;
 }
 
-/* Right Sidebar - Notion Style */
+/* Right Sidebar - Desert Style */
 .practice-section {
     width: 320px;
-    background-color: #f7f6f3;
-    border-left: 1px solid #e9e9e7;
+    background-color: #F5EFE6;
+    border-left: 1px solid #E8DCC8;
     padding: 24px 16px;
     height: calc(100vh - 49px);
     position: sticky;
@@ -222,29 +223,29 @@ header p {
     font-weight: 600;
     margin-bottom: 12px;
     padding: 0 4px;
-    color: #787774;
+    color: #8B7B6C;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 
 .practice-card {
-    background-color: #ffffff;
+    background-color: #FFFEF9;
     border-radius: 6px;
     padding: 16px;
     margin-bottom: 12px;
-    border: 1px solid #e9e9e7;
-    box-shadow: rgba(15, 15, 15, 0.03) 0px 1px 2px;
+    border: 1px solid #E8DCC8;
+    box-shadow: rgba(90, 74, 60, 0.04) 0px 1px 2px;
 }
 
 .practice-card h4 {
-    color: #37352f;
+    color: #5A4A3C;
     margin-bottom: 8px;
     font-size: 14px;
     font-weight: 600;
 }
 
 .practice-card p {
-    color: #787774;
+    color: #8B7B6C;
     font-size: 13px;
     margin-bottom: 12px;
     line-height: 1.5;
@@ -253,29 +254,29 @@ header p {
 .practice-card input[type="text"] {
     width: 100%;
     padding: 8px 10px;
-    border: 1px solid #e9e9e7;
+    border: 1px solid #E8DCC8;
     border-radius: 4px;
     margin-bottom: 8px;
     font-size: 14px;
-    color: #37352f;
-    background-color: #ffffff;
+    color: #5A4A3C;
+    background-color: #FFFEF9;
     transition: all 0.15s ease;
     font-family: inherit;
 }
 
 .practice-card input[type="text"]:focus {
     outline: none;
-    border-color: #2383e2;
-    box-shadow: rgba(35, 131, 226, 0.3) 0px 0px 0px 1px;
+    border-color: #D4856A;
+    box-shadow: rgba(212, 133, 106, 0.3) 0px 0px 0px 1px;
 }
 
 .practice-card input[type="text"]::placeholder {
-    color: #b4b4b2;
+    color: #C4B5A6;
 }
 
-/* Buttons - Notion Style */
+/* Buttons - Desert Style */
 .btn {
-    background-color: #2383e2;
+    background-color: #D4856A;
     color: white;
     border: none;
     padding: 6px 12px;
@@ -288,7 +289,7 @@ header p {
 }
 
 .btn:hover {
-    background-color: #1a6ec4;
+    background-color: #C77D5F;
 }
 
 .btn:active {
@@ -300,7 +301,7 @@ header p {
     font-size: 12px;
 }
 
-/* Answer Feedback - Notion Style */
+/* Answer Feedback - Desert Style */
 .answer-feedback {
     margin-top: 12px;
     padding: 8px 12px;
@@ -310,59 +311,60 @@ header p {
 }
 
 .answer-feedback.correct {
-    background-color: rgba(46, 170, 220, 0.1);
-    color: #0f7b6c;
-    border: 1px solid rgba(46, 170, 220, 0.2);
+    background-color: rgba(143, 168, 142, 0.15);
+    color: #5A6F4D;
+    border: 1px solid rgba(143, 168, 142, 0.3);
     display: block;
 }
 
 .answer-feedback.incorrect {
-    background-color: rgba(235, 87, 87, 0.1);
-    color: #c93636;
-    border: 1px solid rgba(235, 87, 87, 0.2);
+    background-color: rgba(216, 165, 165, 0.15);
+    color: #9E6B6B;
+    border: 1px solid rgba(216, 165, 165, 0.3);
     display: block;
 }
 
-/* Tip Card - Notion Callout Style */
+/* Tip Card - Desert Callout Style */
 .tip-card {
-    background-color: rgba(251, 243, 219, 0.3);
-    border: 1px solid rgba(251, 243, 219, 0.6);
+    background-color: rgba(249, 237, 213, 0.5);
+    border: 1px solid rgba(249, 237, 213, 0.8);
     padding: 12px;
     margin-top: 12px;
     border-radius: 4px;
     font-size: 13px;
     line-height: 1.5;
-    color: #37352f;
+    color: #5A4A3C;
 }
 
 .tip-card strong {
-    color: #a47e3b;
+    color: #A47E3B;
     font-weight: 600;
 }
 
-/* Footer with Channel Credit - Notion Style */
+/* Footer with Channel Credit - Desert Style */
 .channel-credit {
-    background-color: rgba(0, 0, 0, 0.02);
-    border: 1px solid #e9e9e7;
+    background-color: rgba(212, 133, 106, 0.08);
+    border: 1px solid #E8DCC8;
     padding: 12px 16px;
     border-radius: 6px;
     margin-top: 32px;
     font-size: 13px;
-    color: #787774;
+    color: #8B7B6C;
     text-align: center;
 }
 
 .channel-credit a {
-    color: #2383e2;
+    color: #D4856A;
     text-decoration: none;
     font-weight: 500;
 }
 
 .channel-credit a:hover {
     text-decoration: underline;
+    color: #C77D5F;
 }
 
-/* Custom Scrollbar - Notion Style */
+/* Custom Scrollbar - Desert Style */
 ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
@@ -373,12 +375,12 @@ header p {
 }
 
 ::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, 0.15);
+    background-color: rgba(212, 133, 106, 0.25);
     border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background-color: rgba(0, 0, 0, 0.25);
+    background-color: rgba(212, 133, 106, 0.4);
 }
 
 /* Responsive Design */
@@ -398,7 +400,7 @@ header p {
         height: auto;
         position: static;
         border-right: none;
-        border-bottom: 1px solid #e9e9e7;
+        border-bottom: 1px solid #E8DCC8;
     }
 
     .learning-section {
@@ -411,7 +413,7 @@ header p {
         height: auto;
         position: static;
         border-left: none;
-        border-top: 1px solid #e9e9e7;
+        border-top: 1px solid #E8DCC8;
     }
 }
 
@@ -429,12 +431,12 @@ header p {
     }
 }
 
-/* Loading/Fade Animation - Notion Style */
+/* Loading/Fade Animation */
 .fade-in {
-    animation: fadeInNotion 0.2s ease-out;
+    animation: fadeIn 0.2s ease-out;
 }
 
-@keyframes fadeInNotion {
+@keyframes fadeIn {
     from {
         opacity: 0;
         transform: translateY(-4px);
@@ -445,18 +447,18 @@ header p {
     }
 }
 
-/* Selection Color - Notion Style */
+/* Selection Color - Desert Style */
 ::selection {
-    background-color: rgba(35, 131, 226, 0.28);
+    background-color: rgba(212, 133, 106, 0.3);
 }
 
 ::-moz-selection {
-    background-color: rgba(35, 131, 226, 0.28);
+    background-color: rgba(212, 133, 106, 0.3);
 }
 
-/* Focus Visible - Notion Style */
+/* Focus Visible - Desert Style */
 *:focus-visible {
-    outline: 2px solid #2383e2;
+    outline: 2px solid #D4856A;
     outline-offset: 2px;
 }
 
@@ -474,7 +476,7 @@ html {
     user-select: none;
 }
 
-/* Notion-style hover transitions */
+/* Smooth hover transitions */
 .video-card,
 .practice-card,
 .topic-item,

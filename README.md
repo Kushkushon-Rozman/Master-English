@@ -1,284 +1,178 @@
-# English Speaking Mastery Website
+# Master English
 
-A professional, organized website for learning English speaking skills with **dynamically fetched** YouTube videos from **Accent's Way English with Hadar** (@hadar.shemesh).
+An interactive English learning website featuring dynamic video content from **Accent's Way English with Hadar** (@hadar.shemesh). Built with vanilla HTML, CSS, and JavaScript.
+
+**Live Website:** [https://kushkushon-rozman.github.io/Master-English/](https://kushkushon-rozman.github.io/Master-English/)
+
+## Features
+
+- **Dynamic Video Fetching**: Automatically pulls relevant videos from Hadar's YouTube channel
+- **Notion-Inspired Design**: Clean, minimal interface with professional styling
+- **6 Learning Topics**: Pronunciation, Phrases, Conversation, Vocabulary, Fluency, and Accent Reduction
+- **Interactive Practice**: Fill-in-the-blank exercises for each topic
+- **Responsive Design**: Works seamlessly on desktop, tablet, and mobile
+- **Smart Caching**: Reduces API calls and improves load times
 
 ## Project Structure
 
 ```
-my-first-website/
-├── index.html                  # Main HTML file
+Master-English/
+├── index.html              # Main website structure
 ├── css/
-│   └── style.css              # Notion-style design
+│   └── style.css          # Notion-style design system
 ├── js/
-│   └── script.js              # Dynamic video fetching + functionality
-├── assets/                     # For images, icons, etc.
-├── README.md                   # This file
-├── YOUTUBE-API-SETUP.md       # API key setup guide
-└── HOW-TO-UPDATE-VIDEOS.md    # Legacy manual video guide (not needed with API)
+│   ├── config.js          # API key configuration
+│   ├── config.example.js  # Template for API key
+│   └── script.js          # Dynamic video fetching + interactivity
+├── assets/                # Images and icons
+├── .gitignore            # Git ignore rules
+└── README.md             # This file
 ```
-
-## Features
-
-- **Dynamic Video Fetching**: Automatically fetches relevant videos from Hadar's channel
-- **Notion-inspired Design**: Clean, minimal interface with soft colors
-- **6 Learning Topics**: Pronunciation, Phrases, Conversation, Vocabulary, Fluency, Accent
-- **Smart Search**: Videos are filtered by topic using intelligent keywords
-- **Embedded Video Players**: Watch videos directly on the site
-- **Interactive Practice**: Fill-in-the-blank exercises with instant feedback
-- **Responsive Design**: Works on desktop, tablet, and mobile
-- **Caching System**: Reduces API calls and improves performance
-
-## Quick Start
-
-### Option 1: With Dynamic Videos (Recommended)
-
-1. **Get a YouTube API Key** (free, takes 5 minutes)
-   - Follow the guide: [YOUTUBE-API-SETUP.md](YOUTUBE-API-SETUP.md)
-
-2. **Add Your API Key**
-   - Open `js/script.js`
-   - Line 12: Replace `'YOUR_YOUTUBE_API_KEY_HERE'` with your key
-   - Save the file
-
-3. **Open the Website**
-   - Double-click `index.html`
-   - Videos will automatically load from Hadar's channel!
-
-### Option 2: Without API (Manual)
-
-If you don't want to use the API:
-- Videos won't load dynamically
-- You'll see a link to visit Hadar's channel directly
-- You can manually add video IDs (see HOW-TO-UPDATE-VIDEOS.md)
 
 ## How It Works
 
-### Dynamic Video Fetching
+1. **Channel Search**: Searches for Hadar's channel using the YouTube Data API v3
+2. **Topic-Based Filtering**: Each topic uses specific keywords to find relevant videos
+3. **Dynamic Display**: Fetches and displays the 3 most relevant videos per topic
+4. **Caching**: Stores results locally for 1 hour to minimize API usage
+5. **Instant Updates**: Content updates smoothly when switching between topics
 
-The site automatically:
-1. Searches Hadar's YouTube channel (@hadar.shemesh)
-2. Finds videos matching each topic (pronunciation, fluency, etc.)
-3. Displays the 3 most relevant videos per topic
-4. Caches results for 1 hour to save API quota
-5. Updates content when you switch topics
+## Technologies Used
 
-### Search Keywords by Topic
+- **HTML5**: Semantic structure
+- **CSS3**: Custom Notion-inspired design with flexbox layout
+- **JavaScript ES6+**: Async/await, fetch API, localStorage
+- **YouTube Data API v3**: Dynamic video content
 
-```javascript
-Pronunciation: pronunciation, pronounce, sounds, accent
-Phrases: phrases, expressions, idioms, common phrases
-Conversation: conversation, speaking, talk, dialogue
-Vocabulary: vocabulary, words, vocabulary building
-Fluency: fluency, fluent, speak fluently
-Accent: accent, accent reduction, american accent
+## Design Details
+
+Notion-inspired color palette:
+- **Background**: Pure white (#ffffff)
+- **Text**: Dark gray (#37352f)
+- **Sidebar**: Soft beige (#f7f6f3)
+- **Accent**: Notion blue (#2383e2)
+- **Borders**: Light gray (#e9e9e7)
+
+## Running Locally
+
+Since YouTube blocks video embedding on `file://` URLs, you need to run a local server:
+
+**Python (Mac/Linux):**
+```bash
+cd ~/Desktop/my-first-website
+python3 -m http.server 8000
 ```
 
-## Notion-Style Design
+Then open: [http://localhost:8000](http://localhost:8000)
 
-The site uses Notion's exact color palette and design principles:
+**VS Code:**
+- Install "Live Server" extension
+- Right-click [index.html](index.html) → "Open with Live Server"
 
-- **Colors**:
-  - Background: Pure white (#ffffff)
-  - Text: Dark gray (#37352f)
-  - Sidebar: Soft beige (#f7f6f3)
-  - Accent: Notion blue (#2383e2)
+## Configuration
 
-- **Typography**: System fonts, tight spacing
-- **Shadows**: Ultra-subtle, Notion-exact values
-- **Interactions**: Smooth 0.15s transitions
-- **Scrollbar**: Custom minimal design
-
-## Customization
-
-### Change Channel
-
-To fetch from a different YouTube channel:
-
-1. Open `js/script.js`
-2. Lines 15-16, update:
-   ```javascript
-   CHANNEL_HANDLE: '@new-channel-handle',
-   CHANNEL_NAME: "New Channel Name",
-   ```
-
-### Change Topic Keywords
-
-To adjust which videos appear for each topic:
-
-1. Open `js/script.js`
-2. Find `topicSearchQueries` (line 26)
-3. Modify the keywords for any topic
-
-### Change Practice Questions
-
-Edit `topicData` in `js/script.js`:
+The YouTube API key is stored in [js/config.js](js/config.js):
 
 ```javascript
-pronunciation: {
-    title: "Your Title",
-    description: "Your description...",
-    practice: {
-        question: "Question title",
-        prompt: "Your question?",
-        answer: "correctanswer",
-        tip: "Helpful tip"
+const CONFIG = {
+    YOUTUBE_API_KEY: 'your-api-key-here',
+    CHANNEL_HANDLE: '@hadar.shemesh',
+    CHANNEL_NAME: "Accent's Way English with Hadar",
+    VIDEOS_PER_TOPIC: 3,
+    CACHE_DURATION: 3600000 // 1 hour
+};
+```
+
+## Updating Content
+
+### Change the YouTube Channel
+
+Edit [js/config.js](js/config.js):
+```javascript
+CHANNEL_HANDLE: '@new-channel',
+CHANNEL_NAME: "New Channel Name"
+```
+
+### Modify Topic Keywords
+
+Edit search queries in [js/script.js](js/script.js):
+```javascript
+const topicSearchQueries = {
+    pronunciation: ['pronunciation', 'sounds', 'accent'],
+    // Add or modify keywords for each topic
+};
+```
+
+### Update Practice Questions
+
+Edit topic data in [js/script.js](js/script.js):
+```javascript
+const topicData = {
+    pronunciation: {
+        title: "Your Title",
+        description: "Your description",
+        practice: {
+            question: "Question title",
+            prompt: "Your question?",
+            answer: "correctanswer"
+        }
     }
-}
+};
 ```
 
-### Change Design Colors
+## API Usage
 
-Edit `css/style.css`:
-- Notion blue: `#2383e2`
-- Dark text: `#37352f`
-- Gray text: `#787774`
-- Sidebar bg: `#f7f6f3`
-- Borders: `#e9e9e7`
+**YouTube Data API v3:**
+- Free tier: 10,000 units/day
+- Each video search: ~100 units
+- Caching significantly reduces API calls
+- Sufficient for 100+ daily page loads
 
-## API Usage & Quota
-
-**Free Tier:**
-- 10,000 units per day
-- Each search = ~100 units
-- Caching reduces API calls
-- Supports 100+ page loads/day easily
-
-**Monitor Usage:**
-- https://console.cloud.google.com/apis/dashboard
-
-**Cost:**
-- Free for small websites
-- Upgrade available if needed
+**Monitor usage:**
+[Google Cloud Console](https://console.cloud.google.com/apis/dashboard)
 
 ## Browser Compatibility
 
-Tested and working on:
+Works on all modern browsers:
 - Chrome (recommended)
 - Firefox
 - Safari
 - Edge
-- Any modern browser with ES6+ support
 
 ## Troubleshooting
 
-### "API Key not configured" Error
-→ See [YOUTUBE-API-SETUP.md](YOUTUBE-API-SETUP.md)
-→ Make sure you added your key to `js/script.js` line 12
+**Videos not loading?**
+- Check browser console for errors (F12 → Console)
+- Verify API key in [js/config.js](js/config.js)
+- Ensure you're accessing via `http://` not `file://`
+- Try clearing browser cache
 
-### Videos Not Loading
-1. Check browser console (F12 → Console)
-2. Verify API key is correct
-3. Ensure YouTube Data API v3 is enabled
-4. Check internet connection
-5. Try hard refresh (Cmd+Shift+R / Ctrl+Shift+F5)
+**API errors?**
+- Check that YouTube Data API v3 is enabled
+- Verify API key restrictions in Google Cloud Console
+- Check your daily quota usage
 
-### "Could not find channel" Error
-→ The channel lookup failed
-→ Check internet connection
-→ Clear browser cache
-→ Verify channel handle: @hadar.shemesh
+## Deployment
 
-### Wrong Videos Appearing
-→ Adjust search keywords in `topicSearchQueries`
-→ Videos are filtered by channel automatically
+The site is deployed on **GitHub Pages** and automatically updates when changes are pushed to the main branch.
 
-### Design Looks Different
-→ Clear browser cache
-→ Check `css/style.css` is loaded correctly
-→ Look for console errors (F12)
-
-## File Explanations
-
-### [index.html](index.html)
-Clean HTML structure with Notion-style layout. No inline styles or scripts.
-
-### [css/style.css](css/style.css)
-Complete Notion-inspired design system. Includes colors, typography, layout, animations.
-
-### [js/script.js](js/script.js)
-- YouTube API integration
-- Dynamic video fetching
-- Topic switching logic
-- Practice exercise checking
-- Loading and error states
-- Caching system
-
-### [YOUTUBE-API-SETUP.md](YOUTUBE-API-SETUP.md)
-Step-by-step guide to get your free YouTube API key from Google Cloud Console.
-
-### [HOW-TO-UPDATE-VIDEOS.md](HOW-TO-UPDATE-VIDEOS.md)
-Legacy guide for manually adding video IDs. Not needed if using API.
-
-## Adding More Topics
-
-1. **Add to HTML** (`index.html`):
-```html
-<li class="topic-item" data-topic="grammar">
-    <span class="topic-number">7</span>
-    Grammar Rules
-</li>
-```
-
-2. **Add search keywords** (`js/script.js`):
-```javascript
-topicSearchQueries: {
-    grammar: ['grammar', 'grammar rules', 'english grammar']
-}
-```
-
-3. **Add topic data** (`js/script.js`):
-```javascript
-topicData: {
-    grammar: {
-        title: "Grammar Rules",
-        description: "...",
-        practice: { ... }
-    }
-}
-```
-
-## Security & Privacy
-
-- API key is visible in client-side code (this is normal)
-- Restrict key to your domain in Google Cloud Console
-- Monitor usage regularly
-- Free tier is sufficient for personal/small sites
-- No user data is collected or stored (except local cache)
+**To update the live site:**
+1. Make changes to local files
+2. Open GitHub Desktop
+3. Commit changes with a description
+4. Push to GitHub
+5. Wait 1-2 minutes for deployment
 
 ## Credits
 
 - **Design**: Inspired by [Notion](https://notion.so)
 - **Videos**: [Accent's Way English with Hadar](https://www.youtube.com/@hadar.shemesh)
-- **YouTube Handle**: @hadar.shemesh
 - **API**: YouTube Data API v3
 
-## Future Enhancements
+## License
 
-- [ ] Add video thumbnails in search results
-- [ ] Implement video progress tracking
-- [ ] Add quiz mode with scoring
-- [ ] Create downloadable worksheets
-- [ ] Add audio pronunciation examples
-- [ ] Implement user accounts
-- [ ] Add dark mode toggle
-- [ ] Support multiple channels
-- [ ] Add video bookmarking
-
-## Support
-
-**Questions about the code?**
-- Check comments in `js/script.js` and `css/style.css`
-- Use browser DevTools (F12) to inspect elements
-
-**API Issues?**
-- See [YOUTUBE-API-SETUP.md](YOUTUBE-API-SETUP.md)
-- Check Google Cloud Console
-- Review API quota usage
-
-**Hadar's Channel:**
-- Visit: https://www.youtube.com/@hadar.shemesh
-- Channel: Accent's Way English with Hadar
+Personal educational project.
 
 ---
 
-**Built with HTML, CSS, and vanilla JavaScript. No frameworks required.**
+**Built with vanilla JavaScript. No frameworks, no build tools, no dependencies.**
