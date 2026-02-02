@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Key Tester</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f7f6f3;
+        }
+        .test-card {
+            background: white;
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 16px;
+            border: 1px solid #e9e9e7;
+        }
+        .status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            margin-left: 8px;
+        }
+        .status.pending {
+            background-color: #fff9e6;
+            color: #a47e3b;
+        }
+        .status.success {
+            background-color: rgba(46, 170, 220, 0.1);
+            color: #0f7b6c;
+        }
+        .status.error {
+            background-color: rgba(235, 87, 87, 0.1);
+            color: #c93636;
+        }
+        .error-details {
+            background-color: #f8f9fa;
+            padding: 12px;
+            border-radius: 4px;
+            margin-top: 8px;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        button {
+            background-color: #2383e2;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        button:hover {
+            background-color: #1a6ec4;
+        }
+        h1 {
+            color: #37352f;
+        }
+        h2 {
+            color: #37352f;
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+        p {
+            color: #787774;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <h1>YouTube API Key Diagnostic Tool</h1>
+    <p>This tool will test your YouTube API key and help identify any issues.</p>
+
+    <div class="test-card">
+        <h2>API Key Status <span id="key-status" class="status pending">Checking...</span></h2>
+        <p id="key-message">Validating your API key configuration...</p>
+        <div id="key-details" class="error-details" style="display:none;"></div>
+    </div>
+
+    <div class="test-card">
+        <h2>Channel Search Test <span id="channel-status" class="status pending">Pending</span></h2>
+        <p id="channel-message">Will search for Hadar's channel...</p>
+        <div id="channel-details" class="error-details" style="display:none;"></div>
+    </div>
+
+    <div class="test-card">
+        <h2>Video Search Test <span id="video-status" class="status pending">Pending</span></h2>
+        <p id="video-message">Will search for videos on Hadar's channel...</p>
+        <div id="video-details" class="error-details" style="display:none;"></div>
+    </div>
+
+    <button onclick="runTests()">Run Tests Again</button>
+
+    <script src="js/config.js"></script>
+    <script>
+        function updateStatus(testId, status, message, details = null) {
+            const statusEl = document.getElementById(`${testId}-status`);
+            const messageEl = document.getElementById(`${testId}-message`);
+            const detailsEl = document.getElementById(`${testId}-details`);
+
+            statusEl.className = `status ${status}`;
+            statusEl.textContent = status === 'pending' ? 'Testing...' :
+                                   status === 'success' ? '✓ Success' :
+                                   '✗ Failed';
+            messageEl.textContent = message;
+
+            if (details) {
+                detailsEl.style.display = 'block';
+                detailsEl.textContent = details;
+            } else {
+                detailsEl.style.display = 'none';
+            }
+        }
+
+        async function testApiKey() {
+            updateStatus('key', 'pending', 'Checking API key configuration...');
+
+            if (!CONFIG.YOUTUBE_API_KEY) {
+                updateStatus('key', 'error',
+                    'API key is missing!',
+                    'CONFIG.YOUTUBE_API_KEY is not defined');
+                return false;
+            }
+
+            if (CONFIG.YOUTUBE_API_KEY === 'YOUR_YOUTUBE_API_KEY_HERE') {
+                updateStatus('key', 'error',
+                    'API key is not configured!',
+                    'Please replace YOUR_YOUTUBE_API_KEY_HERE with your actual API key in js/config.js');
+                return false;
+            }
+
+            updateStatus('key', 'success',
+                `API key found: ${CONFIG.YOUTUBE_API_KEY.substring(0, 20)}...`,
+                `Full key: ${CONFIG.YOUTUBE_API_KEY}\nLength: ${CONFIG.YOUTUBE_API_KEY.length} characters`);
+            return true;
+        }
+
+        async function testChannelSearch() {
+            updateStatus('channel', 'pending', 'Searching for channel...');
+
+            try {
+                const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(CONFIG.CHANNEL_NAME)}&type=channel&key=${CONFIG.YOUTUBE_API_KEY}`;
+
+                const response = await fetch(url);
+                const data = await response.json();
+
+                if (!response.ok) {
+                    const errorMsg = data.error ?
+                        `${data.error.code}: ${data.error.message}` :
+                        `HTTP Error ${response.status}`;
+
+                    updateStatus('channel', 'error',
+                        'Failed to search for channel',
+                        `Error: ${errorMsg}\n\nResponse:\n${JSON.stringify(data, null, 2)}`);
+                    return null;
+                }
+
+                if (data.items && data.items.length > 0) {
+                    const channel = data.items[0];
+                    updateStatus('channel', 'success',
+                        `Found channel: ${channel.snippet.title}`,
+                        `Channel ID: ${channel.snippet.channelId}\nTitle: ${channel.snippet.title}\nDescription: ${channel.snippet.description.substring(0, 100)}...`);
+                    return channel.snippet.channelId;
+                } else {
+                    updateStatus('channel', 'error',
+                        'Channel not found',
+                        `No results for "${CONFIG.CHANNEL_NAME}"\n\nResponse:\n${JSON.stringify(data, null, 2)}`);
+                    return null;
+                }
+            } catch (error) {
+                updateStatus('channel', 'error',
+                    'Network error',
+                    `${error.message}\n\nStack:\n${error.stack}`);
+                return null;
+            }
+        }
+
+        async function testVideoSearch(channelId) {
+            if (!channelId) {
+                updateStatus('video', 'error', 'Skipped: No channel ID from previous test');
+                return false;
+            }
+
+            updateStatus('video', 'pending', 'Searching for videos...');
+
+            try {
+                const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${channelId}&q=pronunciation&type=video&maxResults=3&order=relevance&key=${CONFIG.YOUTUBE_API_KEY}`;
+
+                const response = await fetch(url);
+                const data = await response.json();
+
+                if (!response.ok) {
+                    const errorMsg = data.error ?
+                        `${data.error.code}: ${data.error.message}` :
+                        `HTTP Error ${response.status}`;
+
+                    updateStatus('video', 'error',
+                        'Failed to search for videos',
+                        `Error: ${errorMsg}\n\nResponse:\n${JSON.stringify(data, null, 2)}`);
+                    return false;
+                }
+
+                if (data.items && data.items.length > 0) {
+                    const videoTitles = data.items.map((v, i) =>
+                        `${i + 1}. ${v.snippet.title}`
+                    ).join('\n');
+
+                    updateStatus('video', 'success',
+                        `Found ${data.items.length} videos!`,
+                        `Videos:\n${videoTitles}\n\nFirst video ID: ${data.items[0].id.videoId}`);
+                    return true;
+                } else {
+                    updateStatus('video', 'error',
+                        'No videos found',
+                        `No results for pronunciation videos\n\nResponse:\n${JSON.stringify(data, null, 2)}`);
+                    return false;
+                }
+            } catch (error) {
+                updateStatus('video', 'error',
+                    'Network error',
+                    `${error.message}\n\nStack:\n${error.stack}`);
+                return false;
+            }
+        }
+
+        async function runTests() {
+            const keyOk = await testApiKey();
+            if (!keyOk) return;
+
+            const channelId = await testChannelSearch();
+            await testVideoSearch(channelId);
+        }
+
+        // Run tests on page load
+        runTests();
+    </script>
+</body>
+</html>
