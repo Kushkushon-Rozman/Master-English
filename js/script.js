@@ -6,120 +6,50 @@
 // Configuration is loaded from js/config.js
 // See js/config.example.js for template
 
-// Topic search keywords for finding relevant videos from Hadar's channel
-const topicSearchQueries = {
-    pronunciation: [
-        'pronunciation',
-        'pronounce',
-        'sounds',
-        'accent'
-    ],
-    phrases: [
-        'phrases',
-        'expressions',
-        'idioms',
-        'common phrases'
-    ],
-    conversation: [
-        'conversation',
-        'speaking',
-        'talk',
-        'dialogue'
-    ],
-    vocabulary: [
-        'vocabulary',
-        'words',
-        'vocabulary building',
-        'learn words'
-    ],
-    fluency: [
-        'fluency',
-        'fluent',
-        'speak fluently',
-        'speaking practice'
-    ],
-    accent: [
-        'accent',
-        'accent reduction',
-        'american accent',
-        'clear speech'
-    ]
+// Chapter-specific search queries for finding relevant videos
+const chapterSearchQueries = {
+    1: ['how to pronounce TH sound', 'TH sound pronunciation', 'voiceless TH voiced TH'],
+    2: ['how to pronounce R sound', 'English R sound', 'American R pronunciation'],
+    3: ['how to pronounce L sound', 'light L dark L', 'English L pronunciation'],
+    4: ['V and W sounds', 'how to pronounce V W', 'difference between V and W'],
+    5: ['short i long e vowels', 'ship sheep pronunciation', 'English vowel sounds'],
+    6: ['word stress English', 'syllable stress', 'English stress patterns'],
+    7: ['intonation English', 'sentence stress', 'English rhythm intonation'],
+    8: ['do does grammar', 'present simple do does', 'how to use do and does'],
+    9: ['prepositions at on in', 'English prepositions time place', 'at on in usage'],
+    10: ['articles a an the', 'English articles', 'when to use the'],
+    11: ['make vs do', 'make do difference', 'English collocations make do'],
+    12: ['say tell difference', 'speak talk difference', 'say tell speak talk'],
+    13: ['present perfect past simple', 'present perfect vs past simple', 'English tenses'],
+    14: ['countable uncountable', 'much many few little', 'English quantifiers'],
+    15: ['English idioms', 'common expressions', 'everyday idioms phrases'],
+    16: ['phrasal verbs', 'English phrasal verbs', 'common phrasal verbs']
 };
 
-// Topic content data structure
-const topicData = {
-    pronunciation: {
-        title: "Basic Pronunciation",
-        description: "Master the fundamental sounds of English. Good pronunciation is the foundation of clear communication. Focus on individual sounds, word stress, and intonation patterns to make yourself understood by native speakers.",
-        practice: {
-            type: "fill-blank",
-            question: "Pronunciation Practice",
-            prompt: "The 'th' sound in 'think' is pronounced with your tongue between your ____.",
-            answer: "teeth",
-            tip: "Place your tongue between your teeth and blow air out. This creates the 'th' sound."
-        }
-    },
-    phrases: {
-        title: "Common Phrases",
-        description: "Learn everyday expressions that native speakers use. These phrases will help you sound more natural and confident in daily conversations. Understanding context and usage is key to effective communication.",
-        practice: {
-            type: "fill-blank",
-            question: "Phrase Practice",
-            prompt: "When greeting someone in the morning, we say 'Good ____'.",
-            answer: "morning",
-            tip: "Common greetings include 'Good morning', 'Good afternoon', and 'Good evening'."
-        }
-    },
-    conversation: {
-        title: "Conversation Skills",
-        description: "Develop the ability to maintain engaging conversations. Learn how to start conversations, ask questions, show interest, and respond naturally. Practice turn-taking and active listening to become a better conversationalist.",
-        practice: {
-            type: "fill-blank",
-            question: "Conversation Practice",
-            prompt: "To show interest in someone's story, you can say '____ me more!'",
-            answer: "tell",
-            tip: "Phrases like 'Tell me more!', 'Really?', and 'That's interesting!' show you're engaged."
-        }
-    },
-    vocabulary: {
-        title: "Vocabulary Building",
-        description: "Expand your word bank systematically. A rich vocabulary allows you to express yourself precisely and understand others better. Focus on high-frequency words first, then gradually add specialized vocabulary for your interests.",
-        practice: {
-            type: "fill-blank",
-            question: "Vocabulary Practice",
-            prompt: "A person who writes books is called an ____.",
-            answer: "author",
-            tip: "Common professions: author (writer), doctor, teacher, engineer, chef."
-        }
-    },
-    fluency: {
-        title: "Fluency Techniques",
-        description: "Speak smoothly and confidently without hesitation. Fluency comes from practice and reducing mental translation. Learn techniques to think in English, use filler words naturally, and maintain your speaking rhythm even when you don't know a word.",
-        practice: {
-            type: "fill-blank",
-            question: "Fluency Practice",
-            prompt: "When you need time to think, you can say 'Well, ____ me see...'",
-            answer: "let",
-            tip: "Filler phrases: 'Let me see...', 'You know...', 'I mean...', 'Actually...' help maintain fluency."
-        }
-    },
-    accent: {
-        title: "Accent Reduction",
-        description: "Work on specific pronunciation challenges from your native language. While accents are natural and beautiful, reducing a heavy accent can improve clarity. Focus on the sounds that are most different from your native language.",
-        practice: {
-            type: "fill-blank",
-            question: "Accent Practice",
-            prompt: "In English, we stress important words. In 'I LOVE pizza', the stressed word is ____.",
-            answer: "love",
-            tip: "Content words (nouns, verbs, adjectives) are usually stressed. Function words (a, the, is) are usually unstressed."
-        }
-    }
-};
+// Course data - loaded from JSON
+let courseData = null;
+let allChapters = [];
 
-// Current topic tracker
-let currentTopic = 'pronunciation';
+// Current chapter tracker
+let currentChapterId = 1;
 let channelId = null;
 let videoCache = {};
+
+/**
+ * Load course content from JSON file
+ */
+async function loadCourseData() {
+    try {
+        const response = await fetch('data/course-content.json');
+        if (!response.ok) throw new Error('Failed to load course data');
+        courseData = await response.json();
+        allChapters = courseData.chapters;
+        return courseData;
+    } catch (error) {
+        console.error('Error loading course data:', error);
+        return null;
+    }
+}
 
 // ==========================================
 // YOUTUBE API FUNCTIONS
@@ -158,9 +88,9 @@ async function getChannelId() {
 }
 
 /**
- * Fetch videos from Hadar's channel for a specific topic
+ * Fetch videos from Hadar's channel for a specific chapter
  */
-async function fetchVideosForTopic(topic) {
+async function fetchVideosForTopic(chapterId) {
     // Check if API key is set
     if (CONFIG.YOUTUBE_API_KEY === 'YOUR_YOUTUBE_API_KEY_HERE') {
         return {
@@ -170,7 +100,7 @@ async function fetchVideosForTopic(topic) {
     }
 
     // Check cache
-    const cacheKey = `videos_${topic}`;
+    const cacheKey = `videos_${chapterId}`;
     const cached = videoCache[cacheKey];
     if (cached && (Date.now() - cached.timestamp) < CONFIG.CACHE_DURATION) {
         return cached.data;
@@ -186,13 +116,22 @@ async function fetchVideosForTopic(topic) {
     }
 
     try {
-        // Search for videos with topic keywords
-        const searchQuery = topicSearchQueries[topic].join(' OR ');
+        // Get search queries for this specific chapter
+        const searchQueries = chapterSearchQueries[chapterId];
+        if (!searchQueries) {
+            return {
+                error: true,
+                message: 'No search queries found for this chapter'
+            };
+        }
+
+        // Search for videos with chapter-specific keywords - fetch 15 to have a good pool
+        const searchQuery = searchQueries.join(' OR ');
         const response = await fetch(
             `https://www.googleapis.com/youtube/v3/search?` +
             `part=snippet&channelId=${chId}&` +
             `q=${encodeURIComponent(searchQuery)}&` +
-            `type=video&maxResults=${CONFIG.VIDEOS_PER_TOPIC}&` +
+            `type=video&maxResults=15&` +
             `order=relevance&key=${CONFIG.YOUTUBE_API_KEY}`
         );
 
@@ -206,21 +145,43 @@ async function fetchVideosForTopic(topic) {
             throw new Error(data.error.message);
         }
 
-        // Transform data into our format
-        const videos = data.items.map(item => ({
-            videoId: item.id.videoId,
+        // Get video IDs
+        const videoIds = data.items.map(item => item.id.videoId).join(',');
+
+        // Fetch video statistics to get view counts
+        const statsResponse = await fetch(
+            `https://www.googleapis.com/youtube/v3/videos?` +
+            `part=statistics,snippet&id=${videoIds}&` +
+            `key=${CONFIG.YOUTUBE_API_KEY}`
+        );
+
+        if (!statsResponse.ok) {
+            throw new Error(`API Error: ${statsResponse.status}`);
+        }
+
+        const statsData = await statsResponse.json();
+
+        // Transform data with view counts
+        const videosWithStats = statsData.items.map(item => ({
+            videoId: item.id,
             title: item.snippet.title,
             description: item.snippet.description.substring(0, 100) + '...',
-            thumbnail: item.snippet.thumbnails.medium.url
+            thumbnail: item.snippet.thumbnails.medium.url,
+            viewCount: parseInt(item.statistics.viewCount)
         }));
+
+        // Sort by view count (highest first) and take top 5
+        const topVideos = videosWithStats
+            .sort((a, b) => b.viewCount - a.viewCount)
+            .slice(0, CONFIG.VIDEOS_PER_TOPIC);
 
         // Cache the results
         videoCache[cacheKey] = {
-            data: videos,
+            data: topVideos,
             timestamp: Date.now()
         };
 
-        return videos;
+        return topVideos;
     } catch (error) {
         console.error('Error fetching videos:', error);
         return {
@@ -309,25 +270,54 @@ function createErrorState(message) {
 }
 
 /**
- * Load content for selected topic
+ * Load content for selected chapter
  */
-async function loadContent(topic) {
-    const data = topicData[topic];
+async function loadContent(chapterId) {
+    if (!courseData) {
+        console.error('Course data not loaded');
+        return;
+    }
+
+    const chapter = allChapters.find(ch => ch.id === chapterId);
+    if (!chapter) {
+        console.error('Chapter not found:', chapterId);
+        return;
+    }
+
     const learningSection = document.getElementById('learning-content');
     const practiceSection = document.getElementById('practice-content');
 
-    // Show loading state
+    // Format learning content with proper line breaks
+    const learningHTML = chapter.learning
+        .split('\n\n')
+        .map(para => `<p>${para.replace(/\n/g, '<br>')}</p>`)
+        .join('');
+
+    // Format exercises content with proper line breaks
+    const exercisesHTML = chapter.exercises
+        .split('\n\n')
+        .map(para => `<p>${para.replace(/\n/g, '<br>')}</p>`)
+        .join('');
+
+    // Update learning section with loading state for videos
     learningSection.innerHTML = `
-        <h2>${data.title}</h2>
-        <p class="description">${data.description}</p>
+        <div class="chapter-header">
+            <span class="chapter-number">Chapter ${chapter.id}</span>
+            <h2>${chapter.title}</h2>
+        </div>
+        <div class="learning-content">
+            <h3>📚 Learning Section</h3>
+            ${learningHTML}
+        </div>
         <div class="videos-section">
             <h3>Video Lessons from ${CONFIG.CHANNEL_NAME}</h3>
             ${createLoadingState()}
         </div>
     `;
+    learningSection.classList.add('fade-in');
 
-    // Fetch videos
-    const videos = await fetchVideosForTopic(topic);
+    // Fetch videos based on specific chapter ID
+    const videos = await fetchVideosForTopic(chapter.id);
 
     // Build video HTML
     let videosHTML = '';
@@ -347,10 +337,16 @@ async function loadContent(topic) {
         videosHTML += `</div>`;
     }
 
-    // Update content
+    // Update learning section with videos
     learningSection.innerHTML = `
-        <h2>${data.title}</h2>
-        <p class="description">${data.description}</p>
+        <div class="chapter-header">
+            <span class="chapter-number">Chapter ${chapter.id}</span>
+            <h2>${chapter.title}</h2>
+        </div>
+        <div class="learning-content">
+            <h3>📚 Learning Section</h3>
+            ${learningHTML}
+        </div>
         <div class="videos-section">
             <h3>Video Lessons from ${CONFIG.CHANNEL_NAME}</h3>
             ${videosHTML}
@@ -359,21 +355,12 @@ async function loadContent(topic) {
             All videos from <a href="https://www.youtube.com/${CONFIG.CHANNEL_HANDLE}" target="_blank">${CONFIG.CHANNEL_NAME}</a> YouTube channel
         </div>
     `;
-    learningSection.classList.add('fade-in');
 
-    // Load practice content
-    const practiceId = `practice-${topic}`;
+    // Update practice section
     practiceSection.innerHTML = `
-        <h2>Practice</h2>
-        <div class="practice-card">
-            <h4>${data.practice.question}</h4>
-            <p>${data.practice.prompt}</p>
-            <input type="text" id="${practiceId}" placeholder="Type your answer here...">
-            <button class="btn btn-small" onclick="checkAnswer('${topic}')">Check Answer</button>
-            <div id="feedback-${topic}" class="answer-feedback"></div>
-        </div>
-        <div class="tip-card">
-            <strong>💡 Tip:</strong> ${data.practice.tip}
+        <h2>Practice Exercises</h2>
+        <div class="exercises-content">
+            ${exercisesHTML}
         </div>
     `;
     practiceSection.classList.add('fade-in');
@@ -386,29 +373,17 @@ async function loadContent(topic) {
 }
 
 /**
- * Check practice answers
+ * Get chapter by category for topic mapping
  */
-function checkAnswer(topic) {
-    const data = topicData[topic];
-    const input = document.getElementById(`practice-${topic}`);
-    const feedback = document.getElementById(`feedback-${topic}`);
-    const userAnswer = input.value.trim().toLowerCase();
-    const correctAnswer = data.practice.answer.toLowerCase();
-
-    if (userAnswer === correctAnswer) {
-        feedback.className = 'answer-feedback correct';
-        feedback.textContent = '✓ Correct! Great job!';
-    } else {
-        feedback.className = 'answer-feedback incorrect';
-        feedback.textContent = `✗ Not quite. The answer is: ${data.practice.answer}`;
-    }
+function getChaptersByCategory(category) {
+    return allChapters.filter(ch => ch.category === category);
 }
 
 // ==========================================
 // INITIALIZATION
 // ==========================================
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
     // Add CSS for loading spinner animation
     const style = document.createElement('style');
     style.textContent = `
@@ -416,13 +391,65 @@ document.addEventListener('DOMContentLoaded', function() {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        .chapter-header {
+            margin-bottom: 24px;
+        }
+        .chapter-number {
+            display: inline-block;
+            background: #2383e2;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .learning-content, .exercises-content {
+            line-height: 1.8;
+        }
+        .learning-content h3, .exercises-content h3 {
+            color: #2383e2;
+            margin-top: 24px;
+            margin-bottom: 12px;
+        }
+        .learning-content p, .exercises-content p {
+            margin-bottom: 16px;
+        }
+        .category-group {
+            margin-bottom: 24px;
+        }
+        .category-title {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #787774;
+            padding: 8px 16px;
+            margin-bottom: 4px;
+            letter-spacing: 0.5px;
+        }
     `;
     document.head.appendChild(style);
 
-    // Load initial content
-    loadContent(currentTopic);
+    // Load course data
+    await loadCourseData();
 
-    // Add click event listeners to all topic items
+    if (!courseData) {
+        document.getElementById('learning-content').innerHTML = `
+            <div style="padding: 40px; text-align: center; color: #c93636;">
+                <h3>Error Loading Course Content</h3>
+                <p>Unable to load the course data. Please refresh the page.</p>
+            </div>
+        `;
+        return;
+    }
+
+    // Build sidebar with all chapters organized by category
+    buildSidebar();
+
+    // Load initial content (first chapter)
+    loadContent(currentChapterId);
+
+    // Add click event listeners to all chapter items
     document.querySelectorAll('.topic-item').forEach(item => {
         item.addEventListener('click', function() {
             // Remove active class from all items
@@ -431,20 +458,56 @@ document.addEventListener('DOMContentLoaded', function() {
             // Add active class to clicked item
             this.classList.add('active');
 
-            // Load content for this topic
-            const topic = this.getAttribute('data-topic');
-            currentTopic = topic;
-            loadContent(topic);
+            // Load content for this chapter
+            const chapterId = parseInt(this.getAttribute('data-chapter'));
+            currentChapterId = chapterId;
+            loadContent(chapterId);
         });
-    });
-
-    // Allow Enter key to submit answers
-    document.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter' && e.target.type === 'text') {
-            checkAnswer(currentTopic);
-        }
     });
 });
 
-// Export functions for inline onclick handlers
-window.checkAnswer = checkAnswer;
+/**
+ * Build the sidebar with all chapters organized by category
+ */
+function buildSidebar() {
+    const sidebar = document.querySelector('.topics-sidebar ul');
+    sidebar.innerHTML = '';
+
+    const categories = {
+        pronunciation: { title: '📢 Pronunciation', chapters: [] },
+        grammar: { title: '📝 Grammar', chapters: [] },
+        practical: { title: '💬 Practical', chapters: [] }
+    };
+
+    // Group chapters by category
+    allChapters.forEach(chapter => {
+        if (categories[chapter.category]) {
+            categories[chapter.category].chapters.push(chapter);
+        }
+    });
+
+    // Build HTML for each category
+    Object.keys(categories).forEach(categoryKey => {
+        const category = categories[categoryKey];
+        if (category.chapters.length === 0) return;
+
+        // Add category title
+        const categoryDiv = document.createElement('div');
+        categoryDiv.className = 'category-group';
+        categoryDiv.innerHTML = `<div class="category-title">${category.title}</div>`;
+
+        // Add chapters in this category
+        category.chapters.forEach(chapter => {
+            const li = document.createElement('li');
+            li.className = 'topic-item' + (chapter.id === 1 ? ' active' : '');
+            li.setAttribute('data-chapter', chapter.id);
+            li.innerHTML = `
+                <span class="topic-number">${chapter.id}</span>
+                ${chapter.title}
+            `;
+            categoryDiv.appendChild(li);
+        });
+
+        sidebar.appendChild(categoryDiv);
+    });
+}
