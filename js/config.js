@@ -15,7 +15,7 @@ const CONFIG = {
     CHANNEL_NAME: "Accent's Way English with Hadar",
 
     // Number of videos to fetch per topic
-    VIDEOS_PER_TOPIC: 3,
+    VIDEOS_PER_TOPIC: 5,
 
     // Cache duration in milliseconds (1 hour)
     CACHE_DURATION: 3600000
