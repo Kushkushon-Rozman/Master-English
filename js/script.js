@@ -35,6 +35,9 @@ let currentChapterId = 1;
 let channelId = null;
 let videoCache = {};
 
+// Progress tracking - stored in localStorage
+let chapterProgress = {};
+
 /**
  * Load course content from JSON file
  */
@@ -516,6 +519,49 @@ function getChaptersByCategory(category) {
     return allChapters.filter(ch => ch.category === category);
 }
 
+/**
+ * Load chapter progress from localStorage
+ */
+function loadProgress() {
+    const saved = localStorage.getItem('chapterProgress');
+    if (saved) {
+        try {
+            chapterProgress = JSON.parse(saved);
+        } catch (e) {
+            console.error('Error loading progress:', e);
+            chapterProgress = {};
+        }
+    }
+}
+
+/**
+ * Save chapter progress to localStorage
+ */
+function saveProgress() {
+    localStorage.setItem('chapterProgress', JSON.stringify(chapterProgress));
+}
+
+/**
+ * Update progress for a chapter
+ */
+function updateProgress(chapterId, step) {
+    chapterProgress[chapterId] = step;
+    saveProgress();
+
+    // Update UI
+    const tracker = document.querySelector(`.progress-tracker[data-chapter="${chapterId}"]`);
+    if (tracker) {
+        const steps = tracker.querySelectorAll('.progress-step');
+        steps.forEach((stepEl, index) => {
+            if (index < step) {
+                stepEl.classList.add('filled');
+            } else {
+                stepEl.classList.remove('filled');
+            }
+        });
+    }
+}
+
 // ==========================================
 // INITIALIZATION
 // ==========================================
@@ -582,6 +628,9 @@ document.addEventListener('DOMContentLoaded', async function() {
         return;
     }
 
+    // Load saved progress
+    loadProgress();
+
     // Build sidebar with all chapters organized by category
     buildSidebar();
 
@@ -590,7 +639,12 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     // Add click event listeners to all chapter items
     document.querySelectorAll('.topic-item').forEach(item => {
-        item.addEventListener('click', function() {
+        item.addEventListener('click', function(e) {
+            // Don't switch chapters if clicking on progress tracker
+            if (e.target.closest('.progress-tracker')) {
+                return;
+            }
+
             // Remove active class from all items
             document.querySelectorAll('.topic-item').forEach(t => t.classList.remove('active'));
 
@@ -601,6 +655,21 @@ document.addEventListener('DOMContentLoaded', async function() {
             const chapterId = parseInt(this.getAttribute('data-chapter'));
             currentChapterId = chapterId;
             loadContent(chapterId);
+        });
+    });
+
+    // Add click event listeners to progress trackers
+    document.querySelectorAll('.progress-tracker').forEach(tracker => {
+        tracker.addEventListener('click', function(e) {
+            e.stopPropagation(); // Prevent chapter selection
+
+            const chapterId = parseInt(this.getAttribute('data-chapter'));
+            const step = e.target.closest('.progress-step');
+
+            if (step) {
+                const stepNumber = parseInt(step.getAttribute('data-step'));
+                updateProgress(chapterId, stepNumber);
+            }
         });
     });
 
@@ -657,9 +726,20 @@ function buildSidebar() {
             const li = document.createElement('li');
             li.className = 'topic-item' + (chapter.id === 1 ? ' active' : '');
             li.setAttribute('data-chapter', chapter.id);
+
+            // Get progress for this chapter
+            const progress = chapterProgress[chapter.id] || 0;
+
             li.innerHTML = `
-                <span class="topic-number">${chapter.id}</span>
-                ${chapter.title}
+                <div class="topic-item-left">
+                    <span class="topic-number">${chapter.id}</span>
+                    <span class="topic-title">${chapter.title}</span>
+                </div>
+                <div class="progress-tracker" data-chapter="${chapter.id}">
+                    ${[1, 2, 3, 4, 5].map(step =>
+                        `<div class="progress-step${step <= progress ? ' filled' : ''}" data-step="${step}"></div>`
+                    ).join('')}
+                </div>
             `;
             categoryDiv.appendChild(li);
         });
