@@ -24,7 +24,7 @@ body {
 /* Header - Modern Figma Style */
 header {
     background: linear-gradient(135deg, rgba(139, 92, 246, 0.95) 0%, rgba(124, 58, 237, 0.95) 100%);
-    padding: 16px 32px;
+    padding: 20px 32px;
     border-bottom: none;
     position: fixed;
     top: 0;
@@ -32,22 +32,16 @@ header {
     right: 0;
     z-index: 100;
     backdrop-filter: blur(20px);
-    box-shadow: 0 4px 24px rgba(124, 58, 237, 0.15);
+    box-shadow: 0 4px 24px rgba(124, 58, 237, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
 }
 
 header h1 {
     font-family: 'Poppins', sans-serif;
     color: #FFFFFF;
-    font-size: 20px;
+    font-size: 22px;
     font-weight: 700;
     letter-spacing: -0.02em;
-}
-
-header p {
-    color: rgba(255, 255, 255, 0.85);
-    margin-top: 2px;
-    font-size: 13px;
-    font-weight: 500;
+    margin: 0;
 }
 
 /* Main Container */
@@ -55,9 +49,9 @@ header p {
     display: flex;
     max-width: 100%;
     margin: 0;
-    margin-top: 60px;
+    margin-top: 62px;
     padding: 0;
-    min-height: calc(100vh - 60px);
+    min-height: calc(100vh - 62px);
 }
 
 /* Left Sidebar - Modern Figma Style */
@@ -66,7 +60,7 @@ header p {
     background-color: #FFFFFF;
     border-right: 1px solid #E5E7EB;
     padding: 20px 12px;
-    height: calc(100vh - 60px);
+    height: calc(100vh - 62px);
     position: sticky;
     top: 0;
     overflow-y: auto;
@@ -271,11 +265,62 @@ header p {
     background: linear-gradient(135deg, #FAFBFC 0%, #F9FAFB 100%);
     border-left: 1px solid #E5E7EB;
     padding: 28px 20px;
-    height: calc(100vh - 60px);
+    height: calc(100vh - 62px);
     position: sticky;
-    top: 60px;
+    top: 62px;
     overflow-y: auto;
     box-shadow: -2px 0 12px rgba(0, 0, 0, 0.03);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Practice Section Collapsed State */
+.practice-section.collapsed {
+    width: 50px;
+    padding: 28px 0;
+    overflow: hidden;
+}
+
+.practice-section.collapsed .practice-content-wrapper {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Practice Section Toggle Button */
+.practice-toggle {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 18px;
+    font-weight: 700;
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+    transition: all 0.2s ease;
+    z-index: 10;
+}
+
+.practice-toggle:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 16px rgba(139, 92, 246, 0.4);
+}
+
+.practice-section.collapsed .practice-toggle {
+    position: fixed;
+    right: 10px;
+    top: 100px;
+}
+
+/* Practice Content Wrapper */
+.practice-content-wrapper {
+    transition: opacity 0.3s ease;
 }
 
 .practice-section h2 {

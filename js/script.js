@@ -302,11 +302,9 @@ async function loadContent(chapterId) {
     // Update learning section with loading state for videos
     learningSection.innerHTML = `
         <div class="chapter-header">
-            <span class="chapter-number">Chapter ${chapter.id}</span>
             <h2>${chapter.title}</h2>
         </div>
         <div class="learning-content">
-            <h3>📚 Learning Section</h3>
             ${learningHTML}
         </div>
         <div class="videos-section">
@@ -340,11 +338,9 @@ async function loadContent(chapterId) {
     // Update with Hadar's videos first
     learningSection.innerHTML = `
         <div class="chapter-header">
-            <span class="chapter-number">Chapter ${chapter.id}</span>
             <h2>${chapter.title}</h2>
         </div>
         <div class="learning-content">
-            <h3>📚 Learning Section</h3>
             ${learningHTML}
         </div>
         <div class="videos-section">
@@ -385,11 +381,9 @@ async function loadContent(chapterId) {
     // Update learning section with all videos
     learningSection.innerHTML = `
         <div class="chapter-header">
-            <span class="chapter-number">Chapter ${chapter.id}</span>
             <h2>${chapter.title}</h2>
         </div>
         <div class="learning-content">
-            <h3>📚 Learning Section</h3>
             ${learningHTML}
         </div>
         <div class="videos-section">
@@ -405,19 +399,20 @@ async function loadContent(chapterId) {
         </div>
     `;
 
-    // Update practice section
-    practiceSection.innerHTML = `
+    // Update practice section (target the content wrapper)
+    const practiceWrapper = practiceSection.querySelector('.practice-content-wrapper');
+    practiceWrapper.innerHTML = `
         <h2>Practice Exercises</h2>
         <div class="exercises-content">
             ${exercisesHTML}
         </div>
     `;
-    practiceSection.classList.add('fade-in');
+    practiceWrapper.classList.add('fade-in');
 
     // Remove animation class after animation completes
     setTimeout(() => {
         learningSection.classList.remove('fade-in');
-        practiceSection.classList.remove('fade-in');
+        practiceWrapper.classList.remove('fade-in');
     }, 200);
 }
 
@@ -550,9 +545,11 @@ document.addEventListener('DOMContentLoaded', async function() {
             line-height: 1.8;
         }
         .learning-content h3, .exercises-content h3 {
-            color: #2383e2;
+            font-family: 'Poppins', sans-serif;
+            color: #7C3AED;
             margin-top: 24px;
             margin-bottom: 12px;
+            font-weight: 600;
         }
         .learning-content p, .exercises-content p {
             margin-bottom: 16px;
@@ -605,6 +602,23 @@ document.addEventListener('DOMContentLoaded', async function() {
             currentChapterId = chapterId;
             loadContent(chapterId);
         });
+    });
+
+    // Add toggle functionality for practice section
+    const practiceToggle = document.getElementById('practice-toggle');
+    const practiceSection = document.getElementById('practice-content');
+
+    practiceToggle.addEventListener('click', function() {
+        practiceSection.classList.toggle('collapsed');
+
+        // Change arrow direction based on collapsed state
+        if (practiceSection.classList.contains('collapsed')) {
+            practiceToggle.textContent = '▶';
+            practiceToggle.setAttribute('title', 'Open Practice Section');
+        } else {
+            practiceToggle.textContent = '◀';
+            practiceToggle.setAttribute('title', 'Close Practice Section');
+        }
     });
 });
 
