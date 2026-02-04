@@ -319,7 +319,7 @@ async function loadContent(chapterId) {
     // Fetch videos based on specific chapter ID
     const videos = await fetchVideosForTopic(chapter.id);
 
-    // Build video HTML
+    // Build Hadar's video HTML
     let videosHTML = '';
     if (videos.error) {
         videosHTML = createErrorState(videos.message);
@@ -337,7 +337,7 @@ async function loadContent(chapterId) {
         videosHTML += `</div>`;
     }
 
-    // Update learning section with videos
+    // Update with Hadar's videos first
     learningSection.innerHTML = `
         <div class="chapter-header">
             <span class="chapter-number">Chapter ${chapter.id}</span>
@@ -352,7 +352,56 @@ async function loadContent(chapterId) {
             ${videosHTML}
         </div>
         <div class="channel-credit">
-            All videos from <a href="https://www.youtube.com/${CONFIG.CHANNEL_HANDLE}" target="_blank">${CONFIG.CHANNEL_NAME}</a> YouTube channel
+            Videos from <a href="https://www.youtube.com/${CONFIG.CHANNEL_HANDLE}" target="_blank">${CONFIG.CHANNEL_NAME}</a> YouTube channel
+        </div>
+        <div class="videos-section" style="margin-top: 32px;">
+            <h3>🌟 Most Viewed Videos on This Topic</h3>
+            ${createLoadingState()}
+        </div>
+    `;
+
+    // Fetch general YouTube videos
+    const generalVideos = await fetchGeneralVideos(chapter.id);
+
+    // Build general videos HTML
+    let generalVideosHTML = '';
+    if (generalVideos.error) {
+        generalVideosHTML = createErrorState(generalVideos.message);
+    } else {
+        generalVideosHTML = `<div class="video-list">`;
+        generalVideos.forEach(video => {
+            generalVideosHTML += `
+                <div class="video-card">
+                    <h4>${video.title}</h4>
+                    <p style="font-size: 12px; color: #8B7B6C; margin-bottom: 4px;">Channel: ${video.channelTitle}</p>
+                    <p>${video.description}</p>
+                    ${createYouTubeEmbed(video.videoId)}
+                </div>
+            `;
+        });
+        generalVideosHTML += `</div>`;
+    }
+
+    // Update learning section with all videos
+    learningSection.innerHTML = `
+        <div class="chapter-header">
+            <span class="chapter-number">Chapter ${chapter.id}</span>
+            <h2>${chapter.title}</h2>
+        </div>
+        <div class="learning-content">
+            <h3>📚 Learning Section</h3>
+            ${learningHTML}
+        </div>
+        <div class="videos-section">
+            <h3>Video Lessons from ${CONFIG.CHANNEL_NAME}</h3>
+            ${videosHTML}
+        </div>
+        <div class="channel-credit">
+            Videos from <a href="https://www.youtube.com/${CONFIG.CHANNEL_HANDLE}" target="_blank">${CONFIG.CHANNEL_NAME}</a> YouTube channel
+        </div>
+        <div class="videos-section" style="margin-top: 32px;">
+            <h3>🌟 Most Viewed Videos on This Topic</h3>
+            ${generalVideosHTML}
         </div>
     `;
 
@@ -370,6 +419,99 @@ async function loadContent(chapterId) {
         learningSection.classList.remove('fade-in');
         practiceSection.classList.remove('fade-in');
     }, 200);
+}
+
+/**
+ * Fetch top videos from all YouTube channels for a specific chapter
+ */
+async function fetchGeneralVideos(chapterId) {
+    // Check if API key is set
+    if (CONFIG.YOUTUBE_API_KEY === 'YOUR_YOUTUBE_API_KEY_HERE') {
+        return {
+            error: true,
+            message: 'API Key not configured'
+        };
+    }
+
+    // Check cache
+    const cacheKey = `general_videos_${chapterId}`;
+    const cached = videoCache[cacheKey];
+    if (cached && (Date.now() - cached.timestamp) < CONFIG.CACHE_DURATION) {
+        return cached.data;
+    }
+
+    try {
+        // Get search queries for this specific chapter
+        const searchQueries = chapterSearchQueries[chapterId];
+        if (!searchQueries) {
+            return { error: true, message: 'No search queries found' };
+        }
+
+        // Search for videos across all YouTube - fetch 10 to have a good pool
+        const searchQuery = searchQueries.join(' OR ');
+        const response = await fetch(
+            `https://www.googleapis.com/youtube/v3/search?` +
+            `part=snippet&` +
+            `q=${encodeURIComponent(searchQuery)}&` +
+            `type=video&maxResults=10&` +
+            `order=viewCount&key=${CONFIG.YOUTUBE_API_KEY}`
+        );
+
+        if (!response.ok) {
+            throw new Error(`API Error: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (data.error) {
+            throw new Error(data.error.message);
+        }
+
+        // Get video IDs
+        const videoIds = data.items.map(item => item.id.videoId).join(',');
+
+        // Fetch video statistics to get view counts
+        const statsResponse = await fetch(
+            `https://www.googleapis.com/youtube/v3/videos?` +
+            `part=statistics,snippet&id=${videoIds}&` +
+            `key=${CONFIG.YOUTUBE_API_KEY}`
+        );
+
+        if (!statsResponse.ok) {
+            throw new Error(`API Error: ${statsResponse.status}`);
+        }
+
+        const statsData = await statsResponse.json();
+
+        // Transform data with view counts
+        const videosWithStats = statsData.items.map(item => ({
+            videoId: item.id,
+            title: item.snippet.title,
+            description: item.snippet.description.substring(0, 100) + '...',
+            thumbnail: item.snippet.thumbnails.medium.url,
+            viewCount: parseInt(item.statistics.viewCount),
+            channelTitle: item.snippet.channelTitle
+        }));
+
+        // Sort by view count (highest first) and take top 3
+        const topVideos = videosWithStats
+            .sort((a, b) => b.viewCount - a.viewCount)
+            .slice(0, 3);
+
+        // Cache the results
+        videoCache[cacheKey] = {
+            data: topVideos,
+            timestamp: Date.now()
+        };
+
+        return topVideos;
+    } catch (error) {
+        console.error('Error fetching general videos:', error);
+        return {
+            error: true,
+            message: error.message
+        };
+    }
 }
 
 /**
