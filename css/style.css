@@ -1,7 +1,10 @@
 /* ============================================
-   Desert Theme Design for English Speaking Mastery
-   Soft, warm colors inspired by desert landscapes
+   Figma-Style Modern Design for English Speaking Mastery
+   Fun, vibrant, and playful interface
    ============================================ */
+
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
 
 /* Reset and Base Styles */
 * {
@@ -11,38 +14,40 @@
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', 'Arial', sans-serif;
-    background-color: #FAF7F0;
-    color: #5A4A3C;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #F9FAFB 0%, #F3F4F6 100%);
+    color: #1F2937;
     line-height: 1.6;
     font-size: 14px;
 }
 
-/* Header - Desert Style */
+/* Header - Modern Figma Style */
 header {
-    background-color: #FFFEF9;
-    padding: 12px 24px;
-    border-bottom: 1px solid #E8DCC8;
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.95) 0%, rgba(124, 58, 237, 0.95) 100%);
+    padding: 16px 32px;
+    border-bottom: none;
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     z-index: 100;
-    backdrop-filter: blur(10px);
-    background-color: rgba(255, 254, 249, 0.95);
+    backdrop-filter: blur(20px);
+    box-shadow: 0 4px 24px rgba(124, 58, 237, 0.15);
 }
 
 header h1 {
-    color: #5A4A3C;
-    font-size: 16px;
-    font-weight: 600;
-    letter-spacing: -0.01em;
+    font-family: 'Poppins', sans-serif;
+    color: #FFFFFF;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
 }
 
 header p {
-    color: #8B7B6C;
+    color: rgba(255, 255, 255, 0.85);
     margin-top: 2px;
-    font-size: 12px;
+    font-size: 13px;
+    font-weight: 500;
 }
 
 /* Main Container */
@@ -50,21 +55,22 @@ header p {
     display: flex;
     max-width: 100%;
     margin: 0;
-    margin-top: 49px;
+    margin-top: 60px;
     padding: 0;
-    min-height: calc(100vh - 49px);
+    min-height: calc(100vh - 60px);
 }
 
-/* Left Sidebar - Desert Style */
+/* Left Sidebar - Modern Figma Style */
 .topics-sidebar {
-    width: 260px;
-    background-color: #F5EFE6;
-    border-right: 1px solid #E8DCC8;
-    padding: 16px 8px;
-    height: calc(100vh - 49px);
+    width: 280px;
+    background-color: #FFFFFF;
+    border-right: 1px solid #E5E7EB;
+    padding: 20px 12px;
+    height: calc(100vh - 60px);
     position: sticky;
     top: 0;
     overflow-y: auto;
+    box-shadow: 2px 0 12px rgba(0, 0, 0, 0.03);
 }
 
 /* Scrollbar styling for sidebar */
@@ -77,22 +83,23 @@ header p {
 }
 
 .topics-sidebar::-webkit-scrollbar-thumb {
-    background: #D4856A;
-    border-radius: 3px;
+    background: #A78BFA;
+    border-radius: 4px;
 }
 
 .topics-sidebar::-webkit-scrollbar-thumb:hover {
-    background: #C77D5F;
+    background: #8B5CF6;
 }
 
 .topics-sidebar h2 {
-    font-size: 12px;
-    font-weight: 600;
-    margin-bottom: 8px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 12px;
     padding: 4px 12px;
-    color: #8B7B6C;
+    color: #6B7280;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.8px;
 }
 
 .topic-list {
@@ -100,65 +107,71 @@ header p {
 }
 
 .category-group {
-    margin-bottom: 16px;
+    margin-bottom: 20px;
 }
 
 .category-title {
-    font-size: 11px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 12px;
     font-weight: 700;
     text-transform: uppercase;
-    color: #8B7B6C;
-    padding: 8px 12px;
-    margin-bottom: 4px;
-    letter-spacing: 0.5px;
+    color: #9CA3AF;
+    padding: 10px 12px;
+    margin-bottom: 6px;
+    letter-spacing: 0.8px;
 }
 
 .topic-item {
-    padding: 6px 12px;
-    margin-bottom: 1px;
-    border-radius: 4px;
+    padding: 10px 14px;
+    margin-bottom: 4px;
+    border-radius: 10px;
     cursor: pointer;
-    transition: background-color 0.15s ease;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
     align-items: center;
-    font-size: 13px;
-    color: #5A4A3C;
+    font-size: 14px;
+    font-weight: 500;
+    color: #374151;
     user-select: none;
     line-height: 1.4;
 }
 
 .topic-item:hover {
-    background-color: rgba(212, 133, 106, 0.08);
+    background: linear-gradient(135deg, #F3F4F6 0%, #E5E7EB 100%);
+    transform: translateX(4px);
 }
 
 .topic-item.active {
-    background-color: rgba(212, 133, 106, 0.15);
-    color: #C77D5F;
+    background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
+    color: #FFFFFF;
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+    transform: translateX(4px);
 }
 
 .topic-number {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 20px;
-    height: 20px;
-    background-color: #EDD5C8;
-    border-radius: 3px;
-    margin-right: 8px;
-    font-size: 11px;
-    font-weight: 500;
-    color: #8B7B6C;
+    width: 24px;
+    height: 24px;
+    background-color: #F3F4F6;
+    border-radius: 8px;
+    margin-right: 10px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #6B7280;
+    font-family: 'Poppins', sans-serif;
 }
 
 .topic-item.active .topic-number {
-    background-color: #D4856A;
-    color: white;
+    background-color: rgba(255, 255, 255, 0.25);
+    color: #FFFFFF;
 }
 
-/* Middle Section - Desert Content Style */
+/* Middle Section - Modern Figma Style */
 .learning-section {
     flex: 1;
-    background-color: #FAF7F0;
+    background: linear-gradient(135deg, #FAFBFC 0%, #F9FAFB 100%);
     padding: 48px 96px;
     max-width: 900px;
     margin: 0 auto;
@@ -166,27 +179,34 @@ header p {
 }
 
 .learning-section h2 {
-    color: #5A4A3C;
-    font-size: 32px;
-    font-weight: 700;
-    margin-bottom: 8px;
-    letter-spacing: -0.02em;
+    font-family: 'Poppins', sans-serif;
+    color: #111827;
+    font-size: 36px;
+    font-weight: 800;
+    margin-bottom: 10px;
+    letter-spacing: -0.03em;
     line-height: 1.2;
+    background: linear-gradient(135deg, #7C3AED 0%, #8B5CF6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 .learning-section .description {
-    color: #8B7B6C;
+    color: #6B7280;
     margin-bottom: 32px;
     font-size: 16px;
-    line-height: 1.6;
+    line-height: 1.7;
+    font-weight: 500;
 }
 
 .videos-section h3 {
-    color: #5A4A3C;
-    margin-bottom: 16px;
-    font-size: 18px;
-    font-weight: 600;
-    letter-spacing: -0.01em;
+    font-family: 'Poppins', sans-serif;
+    color: #1F2937;
+    margin-bottom: 20px;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
 }
 
 .video-list {
@@ -195,32 +215,34 @@ header p {
     gap: 16px;
 }
 
-/* YouTube Video Card - Desert Style */
+/* YouTube Video Card - Modern Figma Style */
 .video-card {
-    border: 1px solid #E8DCC8;
-    border-radius: 6px;
-    padding: 16px;
-    background-color: #FFFEF9;
-    transition: all 0.15s ease;
+    border: 2px solid #F3F4F6;
+    border-radius: 16px;
+    padding: 20px;
+    background-color: #FFFFFF;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .video-card:hover {
-    box-shadow: rgba(90, 74, 60, 0.08) 0px 0px 0px 1px,
-                rgba(90, 74, 60, 0.08) 0px 2px 4px;
-    border-color: #D4C4B0;
+    box-shadow: 0 12px 32px rgba(124, 58, 237, 0.15);
+    border-color: #A78BFA;
+    transform: translateY(-4px);
 }
 
 .video-card h4 {
-    color: #5A4A3C;
-    margin-bottom: 4px;
-    font-size: 16px;
+    font-family: 'Poppins', sans-serif;
+    color: #111827;
+    margin-bottom: 6px;
+    font-size: 17px;
     font-weight: 600;
 }
 
 .video-card p {
-    color: #8B7B6C;
+    color: #6B7280;
     font-size: 14px;
-    margin-bottom: 12px;
+    margin-bottom: 14px;
+    line-height: 1.6;
 }
 
 /* YouTube Embed Container */
@@ -229,8 +251,9 @@ header p {
     padding-bottom: 56.25%;
     height: 0;
     overflow: hidden;
-    border-radius: 4px;
-    background-color: #5A4A3C;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
+    box-shadow: 0 8px 24px rgba(124, 58, 237, 0.2);
 }
 
 .video-embed iframe {
@@ -242,94 +265,108 @@ header p {
     border: none;
 }
 
-/* Right Sidebar - Desert Style */
+/* Right Sidebar - Modern Figma Style */
 .practice-section {
-    width: 320px;
-    background-color: #F5EFE6;
-    border-left: 1px solid #E8DCC8;
-    padding: 24px 16px;
-    height: calc(100vh - 49px);
+    width: 340px;
+    background: linear-gradient(135deg, #FAFBFC 0%, #F9FAFB 100%);
+    border-left: 1px solid #E5E7EB;
+    padding: 28px 20px;
+    height: calc(100vh - 60px);
     position: sticky;
-    top: 49px;
+    top: 60px;
     overflow-y: auto;
+    box-shadow: -2px 0 12px rgba(0, 0, 0, 0.03);
 }
 
 .practice-section h2 {
-    font-size: 12px;
-    font-weight: 600;
-    margin-bottom: 12px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 16px;
     padding: 0 4px;
-    color: #8B7B6C;
+    color: #6B7280;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.8px;
 }
 
 .practice-card {
-    background-color: #FFFEF9;
-    border-radius: 6px;
-    padding: 16px;
-    margin-bottom: 12px;
-    border: 1px solid #E8DCC8;
-    box-shadow: rgba(90, 74, 60, 0.04) 0px 1px 2px;
+    background-color: #FFFFFF;
+    border-radius: 14px;
+    padding: 18px;
+    margin-bottom: 16px;
+    border: 2px solid #F3F4F6;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+    transition: all 0.3s ease;
+}
+
+.practice-card:hover {
+    border-color: #A78BFA;
+    box-shadow: 0 8px 20px rgba(139, 92, 246, 0.15);
 }
 
 .practice-card h4 {
-    color: #5A4A3C;
-    margin-bottom: 8px;
-    font-size: 14px;
+    font-family: 'Poppins', sans-serif;
+    color: #111827;
+    margin-bottom: 10px;
+    font-size: 15px;
     font-weight: 600;
 }
 
 .practice-card p {
-    color: #8B7B6C;
+    color: #6B7280;
     font-size: 13px;
-    margin-bottom: 12px;
-    line-height: 1.5;
+    margin-bottom: 14px;
+    line-height: 1.6;
 }
 
 .practice-card input[type="text"] {
     width: 100%;
-    padding: 8px 10px;
-    border: 1px solid #E8DCC8;
-    border-radius: 4px;
-    margin-bottom: 8px;
+    padding: 10px 14px;
+    border: 2px solid #E5E7EB;
+    border-radius: 10px;
+    margin-bottom: 10px;
     font-size: 14px;
-    color: #5A4A3C;
-    background-color: #FFFEF9;
-    transition: all 0.15s ease;
-    font-family: inherit;
+    color: #1F2937;
+    background-color: #FAFBFC;
+    transition: all 0.2s ease;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
 }
 
 .practice-card input[type="text"]:focus {
     outline: none;
-    border-color: #D4856A;
-    box-shadow: rgba(212, 133, 106, 0.3) 0px 0px 0px 1px;
+    border-color: #8B5CF6;
+    box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1);
+    background-color: #FFFFFF;
 }
 
 .practice-card input[type="text"]::placeholder {
-    color: #C4B5A6;
+    color: #9CA3AF;
 }
 
-/* Buttons - Desert Style */
+/* Buttons - Modern Figma Style */
 .btn {
-    background-color: #D4856A;
+    background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
     color: white;
     border: none;
-    padding: 6px 12px;
-    border-radius: 4px;
+    padding: 8px 16px;
+    border-radius: 10px;
     cursor: pointer;
-    font-size: 13px;
-    font-weight: 500;
-    transition: background-color 0.15s ease;
-    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
 }
 
 .btn:hover {
-    background-color: #C77D5F;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(139, 92, 246, 0.4);
 }
 
 .btn:active {
-    transform: scale(0.98);
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
 }
 
 .btn-small {
@@ -337,86 +374,91 @@ header p {
     font-size: 12px;
 }
 
-/* Answer Feedback - Desert Style */
+/* Answer Feedback - Modern Figma Style */
 .answer-feedback {
     margin-top: 12px;
-    padding: 8px 12px;
-    border-radius: 4px;
+    padding: 10px 14px;
+    border-radius: 10px;
     display: none;
     font-size: 13px;
+    font-weight: 500;
 }
 
 .answer-feedback.correct {
-    background-color: rgba(143, 168, 142, 0.15);
-    color: #5A6F4D;
-    border: 1px solid rgba(143, 168, 142, 0.3);
+    background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+    color: #065F46;
+    border: 2px solid #10B981;
     display: block;
 }
 
 .answer-feedback.incorrect {
-    background-color: rgba(216, 165, 165, 0.15);
-    color: #9E6B6B;
-    border: 1px solid rgba(216, 165, 165, 0.3);
+    background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+    color: #991B1B;
+    border: 2px solid #EF4444;
     display: block;
 }
 
-/* Tip Card - Desert Callout Style */
+/* Tip Card - Modern Callout Style */
 .tip-card {
-    background-color: rgba(249, 237, 213, 0.5);
-    border: 1px solid rgba(249, 237, 213, 0.8);
-    padding: 12px;
-    margin-top: 12px;
-    border-radius: 4px;
+    background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+    border: 2px solid #FBBF24;
+    padding: 14px;
+    margin-top: 14px;
+    border-radius: 12px;
     font-size: 13px;
-    line-height: 1.5;
-    color: #5A4A3C;
-}
-
-.tip-card strong {
-    color: #A47E3B;
-    font-weight: 600;
-}
-
-/* Footer with Channel Credit - Desert Style */
-.channel-credit {
-    background-color: rgba(212, 133, 106, 0.08);
-    border: 1px solid #E8DCC8;
-    padding: 12px 16px;
-    border-radius: 6px;
-    margin-top: 32px;
-    font-size: 13px;
-    color: #8B7B6C;
-    text-align: center;
-}
-
-.channel-credit a {
-    color: #D4856A;
-    text-decoration: none;
+    line-height: 1.6;
+    color: #78350F;
     font-weight: 500;
 }
 
-.channel-credit a:hover {
-    text-decoration: underline;
-    color: #C77D5F;
+.tip-card strong {
+    color: #92400E;
+    font-weight: 700;
 }
 
-/* Custom Scrollbar - Desert Style */
+/* Footer with Channel Credit - Modern Figma Style */
+.channel-credit {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(124, 58, 237, 0.1) 100%);
+    border: 2px solid #DDD6FE;
+    padding: 14px 20px;
+    border-radius: 14px;
+    margin-top: 36px;
+    font-size: 14px;
+    color: #4B5563;
+    text-align: center;
+    font-weight: 500;
+}
+
+.channel-credit a {
+    color: #7C3AED;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.channel-credit a:hover {
+    color: #6D28D9;
+    text-decoration: underline;
+}
+
+/* Custom Scrollbar - Modern Figma Style */
 ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 10px;
+    height: 10px;
 }
 
 ::-webkit-scrollbar-track {
-    background: transparent;
+    background: #F3F4F6;
 }
 
 ::-webkit-scrollbar-thumb {
-    background-color: rgba(212, 133, 106, 0.25);
-    border-radius: 4px;
+    background: linear-gradient(135deg, #A78BFA 0%, #8B5CF6 100%);
+    border-radius: 6px;
+    border: 2px solid #F3F4F6;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background-color: rgba(212, 133, 106, 0.4);
+    background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
 }
 
 /* Responsive Design */
@@ -436,12 +478,12 @@ header p {
         height: auto;
         position: static;
         border-right: none;
-        border-bottom: 1px solid #E8DCC8;
+        border-bottom: 1px solid #E5E7EB;
     }
 
     .learning-section {
         max-width: 100%;
-        padding: 24px;
+        padding: 32px;
     }
 
     .practice-section {
@@ -449,21 +491,34 @@ header p {
         height: auto;
         position: static;
         border-left: none;
-        border-top: 1px solid #E8DCC8;
+        border-top: 1px solid #E5E7EB;
     }
 }
 
 @media (max-width: 768px) {
+    header {
+        padding: 12px 20px;
+    }
+
+    header h1 {
+        font-size: 18px;
+    }
+
     .learning-section {
-        padding: 16px;
+        padding: 20px;
     }
 
     .learning-section h2 {
-        font-size: 24px;
+        font-size: 28px;
     }
 
     .learning-section .description {
-        font-size: 14px;
+        font-size: 15px;
+    }
+
+    .video-card {
+        padding: 16px;
+        border-radius: 12px;
     }
 }
 
@@ -483,19 +538,22 @@ header p {
     }
 }
 
-/* Selection Color - Desert Style */
+/* Selection Color - Modern Figma Style */
 ::selection {
-    background-color: rgba(212, 133, 106, 0.3);
+    background-color: rgba(139, 92, 246, 0.25);
+    color: #1F2937;
 }
 
 ::-moz-selection {
-    background-color: rgba(212, 133, 106, 0.3);
+    background-color: rgba(139, 92, 246, 0.25);
+    color: #1F2937;
 }
 
-/* Focus Visible - Desert Style */
+/* Focus Visible - Modern Figma Style */
 *:focus-visible {
-    outline: 2px solid #D4856A;
+    outline: 3px solid #A78BFA;
     outline-offset: 2px;
+    border-radius: 4px;
 }
 
 /* Smooth Scrolling */
