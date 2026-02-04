@@ -664,8 +664,15 @@ document.addEventListener('DOMContentLoaded', async function() {
             e.stopPropagation(); // Prevent chapter selection
 
             const chapterId = parseInt(this.getAttribute('data-chapter'));
-            const step = e.target.closest('.progress-step');
 
+            // Check if reset button was clicked
+            if (e.target.closest('.progress-reset')) {
+                updateProgress(chapterId, 0);
+                return;
+            }
+
+            // Check if progress step was clicked
+            const step = e.target.closest('.progress-step');
             if (step) {
                 const stepNumber = parseInt(step.getAttribute('data-step'));
                 updateProgress(chapterId, stepNumber);
@@ -736,6 +743,7 @@ function buildSidebar() {
                     <span class="topic-title">${chapter.title}</span>
                 </div>
                 <div class="progress-tracker" data-chapter="${chapter.id}">
+                    <div class="progress-reset" data-chapter="${chapter.id}" title="Reset progress">×</div>
                     ${[1, 2, 3, 4, 5].map(step =>
                         `<div class="progress-step${step <= progress ? ' filled' : ''}" data-step="${step}"></div>`
                     ).join('')}

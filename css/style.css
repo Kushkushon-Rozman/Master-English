@@ -189,6 +189,34 @@ header h1 {
     background: rgba(243, 244, 246, 0.5);
 }
 
+.progress-reset {
+    width: 16px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 10px;
+    color: #9CA3AF;
+    transition: all 0.2s ease;
+    border-radius: 3px;
+}
+
+.progress-reset:hover {
+    color: #EF4444;
+    background: rgba(239, 68, 68, 0.1);
+    transform: scale(1.2);
+}
+
+.topic-item.active .progress-reset {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.topic-item.active .progress-reset:hover {
+    color: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.15);
+}
+
 .progress-step {
     width: 8px;
     height: 20px;
