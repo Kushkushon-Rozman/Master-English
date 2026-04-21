@@ -35,6 +35,9 @@ let currentChapterId = 1;
 let channelId = null;
 let videoCache = {};
 
+// Progress tracking - stored in localStorage
+let chapterProgress = {};
+
 /**
  * Load course content from JSON file
  */
@@ -302,11 +305,9 @@ async function loadContent(chapterId) {
     // Update learning section with loading state for videos
     learningSection.innerHTML = `
         <div class="chapter-header">
-            <span class="chapter-number">Chapter ${chapter.id}</span>
             <h2>${chapter.title}</h2>
         </div>
         <div class="learning-content">
-            <h3>📚 Learning Section</h3>
             ${learningHTML}
         </div>
         <div class="videos-section">
@@ -319,7 +320,7 @@ async function loadContent(chapterId) {
     // Fetch videos based on specific chapter ID
     const videos = await fetchVideosForTopic(chapter.id);
 
-    // Build video HTML
+    // Build Hadar's video HTML
     let videosHTML = '';
     if (videos.error) {
         videosHTML = createErrorState(videos.message);
@@ -337,14 +338,12 @@ async function loadContent(chapterId) {
         videosHTML += `</div>`;
     }
 
-    // Update learning section with videos
+    // Update with Hadar's videos first
     learningSection.innerHTML = `
         <div class="chapter-header">
-            <span class="chapter-number">Chapter ${chapter.id}</span>
             <h2>${chapter.title}</h2>
         </div>
         <div class="learning-content">
-            <h3>📚 Learning Section</h3>
             ${learningHTML}
         </div>
         <div class="videos-section">
@@ -352,24 +351,165 @@ async function loadContent(chapterId) {
             ${videosHTML}
         </div>
         <div class="channel-credit">
-            All videos from <a href="https://www.youtube.com/${CONFIG.CHANNEL_HANDLE}" target="_blank">${CONFIG.CHANNEL_NAME}</a> YouTube channel
+            Videos from <a href="https://www.youtube.com/${CONFIG.CHANNEL_HANDLE}" target="_blank">${CONFIG.CHANNEL_NAME}</a> YouTube channel
+        </div>
+        <div class="videos-section" style="margin-top: 32px;">
+            <h3>🌟 Most Viewed Videos on This Topic</h3>
+            ${createLoadingState()}
         </div>
     `;
 
-    // Update practice section
-    practiceSection.innerHTML = `
+    // Fetch general YouTube videos
+    const generalVideos = await fetchGeneralVideos(chapter.id);
+
+    // Build general videos HTML
+    let generalVideosHTML = '';
+    if (generalVideos.error) {
+        generalVideosHTML = createErrorState(generalVideos.message);
+    } else {
+        generalVideosHTML = `<div class="video-list">`;
+        generalVideos.forEach(video => {
+            generalVideosHTML += `
+                <div class="video-card">
+                    <h4>${video.title}</h4>
+                    <p style="font-size: 12px; color: #8B7B6C; margin-bottom: 4px;">Channel: ${video.channelTitle}</p>
+                    <p>${video.description}</p>
+                    ${createYouTubeEmbed(video.videoId)}
+                </div>
+            `;
+        });
+        generalVideosHTML += `</div>`;
+    }
+
+    // Update learning section with all videos
+    learningSection.innerHTML = `
+        <div class="chapter-header">
+            <h2>${chapter.title}</h2>
+        </div>
+        <div class="learning-content">
+            ${learningHTML}
+        </div>
+        <div class="videos-section">
+            <h3>Video Lessons from ${CONFIG.CHANNEL_NAME}</h3>
+            ${videosHTML}
+        </div>
+        <div class="channel-credit">
+            Videos from <a href="https://www.youtube.com/${CONFIG.CHANNEL_HANDLE}" target="_blank">${CONFIG.CHANNEL_NAME}</a> YouTube channel
+        </div>
+        <div class="videos-section" style="margin-top: 32px;">
+            <h3>🌟 Most Viewed Videos on This Topic</h3>
+            ${generalVideosHTML}
+        </div>
+    `;
+
+    // Update practice section (target the content wrapper)
+    const practiceWrapper = practiceSection.querySelector('.practice-content-wrapper');
+    practiceWrapper.innerHTML = `
         <h2>Practice Exercises</h2>
         <div class="exercises-content">
             ${exercisesHTML}
         </div>
     `;
-    practiceSection.classList.add('fade-in');
+    practiceWrapper.classList.add('fade-in');
 
     // Remove animation class after animation completes
     setTimeout(() => {
         learningSection.classList.remove('fade-in');
-        practiceSection.classList.remove('fade-in');
+        practiceWrapper.classList.remove('fade-in');
     }, 200);
+}
+
+/**
+ * Fetch top videos from all YouTube channels for a specific chapter
+ */
+async function fetchGeneralVideos(chapterId) {
+    // Check if API key is set
+    if (CONFIG.YOUTUBE_API_KEY === 'YOUR_YOUTUBE_API_KEY_HERE') {
+        return {
+            error: true,
+            message: 'API Key not configured'
+        };
+    }
+
+    // Check cache
+    const cacheKey = `general_videos_${chapterId}`;
+    const cached = videoCache[cacheKey];
+    if (cached && (Date.now() - cached.timestamp) < CONFIG.CACHE_DURATION) {
+        return cached.data;
+    }
+
+    try {
+        // Get search queries for this specific chapter
+        const searchQueries = chapterSearchQueries[chapterId];
+        if (!searchQueries) {
+            return { error: true, message: 'No search queries found' };
+        }
+
+        // Search for videos across all YouTube - fetch 10 to have a good pool
+        const searchQuery = searchQueries.join(' OR ');
+        const response = await fetch(
+            `https://www.googleapis.com/youtube/v3/search?` +
+            `part=snippet&` +
+            `q=${encodeURIComponent(searchQuery)}&` +
+            `type=video&maxResults=10&` +
+            `order=viewCount&key=${CONFIG.YOUTUBE_API_KEY}`
+        );
+
+        if (!response.ok) {
+            throw new Error(`API Error: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (data.error) {
+            throw new Error(data.error.message);
+        }
+
+        // Get video IDs
+        const videoIds = data.items.map(item => item.id.videoId).join(',');
+
+        // Fetch video statistics to get view counts
+        const statsResponse = await fetch(
+            `https://www.googleapis.com/youtube/v3/videos?` +
+            `part=statistics,snippet&id=${videoIds}&` +
+            `key=${CONFIG.YOUTUBE_API_KEY}`
+        );
+
+        if (!statsResponse.ok) {
+            throw new Error(`API Error: ${statsResponse.status}`);
+        }
+
+        const statsData = await statsResponse.json();
+
+        // Transform data with view counts
+        const videosWithStats = statsData.items.map(item => ({
+            videoId: item.id,
+            title: item.snippet.title,
+            description: item.snippet.description.substring(0, 100) + '...',
+            thumbnail: item.snippet.thumbnails.medium.url,
+            viewCount: parseInt(item.statistics.viewCount),
+            channelTitle: item.snippet.channelTitle
+        }));
+
+        // Sort by view count (highest first) and take top 3
+        const topVideos = videosWithStats
+            .sort((a, b) => b.viewCount - a.viewCount)
+            .slice(0, 3);
+
+        // Cache the results
+        videoCache[cacheKey] = {
+            data: topVideos,
+            timestamp: Date.now()
+        };
+
+        return topVideos;
+    } catch (error) {
+        console.error('Error fetching general videos:', error);
+        return {
+            error: true,
+            message: error.message
+        };
+    }
 }
 
 /**
@@ -377,6 +517,49 @@ async function loadContent(chapterId) {
  */
 function getChaptersByCategory(category) {
     return allChapters.filter(ch => ch.category === category);
+}
+
+/**
+ * Load chapter progress from localStorage
+ */
+function loadProgress() {
+    const saved = localStorage.getItem('chapterProgress');
+    if (saved) {
+        try {
+            chapterProgress = JSON.parse(saved);
+        } catch (e) {
+            console.error('Error loading progress:', e);
+            chapterProgress = {};
+        }
+    }
+}
+
+/**
+ * Save chapter progress to localStorage
+ */
+function saveProgress() {
+    localStorage.setItem('chapterProgress', JSON.stringify(chapterProgress));
+}
+
+/**
+ * Update progress for a chapter
+ */
+function updateProgress(chapterId, step) {
+    chapterProgress[chapterId] = step;
+    saveProgress();
+
+    // Update UI
+    const tracker = document.querySelector(`.progress-tracker[data-chapter="${chapterId}"]`);
+    if (tracker) {
+        const steps = tracker.querySelectorAll('.progress-step');
+        steps.forEach((stepEl, index) => {
+            if (index < step) {
+                stepEl.classList.add('filled');
+            } else {
+                stepEl.classList.remove('filled');
+            }
+        });
+    }
 }
 
 // ==========================================
@@ -408,9 +591,11 @@ document.addEventListener('DOMContentLoaded', async function() {
             line-height: 1.8;
         }
         .learning-content h3, .exercises-content h3 {
-            color: #2383e2;
+            font-family: 'Poppins', sans-serif;
+            color: #7C3AED;
             margin-top: 24px;
             margin-bottom: 12px;
+            font-weight: 600;
         }
         .learning-content p, .exercises-content p {
             margin-bottom: 16px;
@@ -443,6 +628,9 @@ document.addEventListener('DOMContentLoaded', async function() {
         return;
     }
 
+    // Load saved progress
+    loadProgress();
+
     // Build sidebar with all chapters organized by category
     buildSidebar();
 
@@ -451,7 +639,12 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     // Add click event listeners to all chapter items
     document.querySelectorAll('.topic-item').forEach(item => {
-        item.addEventListener('click', function() {
+        item.addEventListener('click', function(e) {
+            // Don't switch chapters if clicking on progress tracker
+            if (e.target.closest('.progress-tracker')) {
+                return;
+            }
+
             // Remove active class from all items
             document.querySelectorAll('.topic-item').forEach(t => t.classList.remove('active'));
 
@@ -463,6 +656,45 @@ document.addEventListener('DOMContentLoaded', async function() {
             currentChapterId = chapterId;
             loadContent(chapterId);
         });
+    });
+
+    // Add click event listeners to progress trackers
+    document.querySelectorAll('.progress-tracker').forEach(tracker => {
+        tracker.addEventListener('click', function(e) {
+            e.stopPropagation(); // Prevent chapter selection
+
+            const chapterId = parseInt(this.getAttribute('data-chapter'));
+
+            // Check if reset button was clicked
+            if (e.target.closest('.progress-reset')) {
+                updateProgress(chapterId, 0);
+                return;
+            }
+
+            // Check if progress step was clicked
+            const step = e.target.closest('.progress-step');
+            if (step) {
+                const stepNumber = parseInt(step.getAttribute('data-step'));
+                updateProgress(chapterId, stepNumber);
+            }
+        });
+    });
+
+    // Add toggle functionality for practice section
+    const practiceToggle = document.getElementById('practice-toggle');
+    const practiceSection = document.getElementById('practice-content');
+
+    practiceToggle.addEventListener('click', function() {
+        practiceSection.classList.toggle('collapsed');
+
+        // Change arrow direction based on collapsed state
+        if (practiceSection.classList.contains('collapsed')) {
+            practiceToggle.textContent = '▶';
+            practiceToggle.setAttribute('title', 'Open Practice Section');
+        } else {
+            practiceToggle.textContent = '◀';
+            practiceToggle.setAttribute('title', 'Close Practice Section');
+        }
     });
 });
 
@@ -501,9 +733,21 @@ function buildSidebar() {
             const li = document.createElement('li');
             li.className = 'topic-item' + (chapter.id === 1 ? ' active' : '');
             li.setAttribute('data-chapter', chapter.id);
+
+            // Get progress for this chapter
+            const progress = chapterProgress[chapter.id] || 0;
+
             li.innerHTML = `
-                <span class="topic-number">${chapter.id}</span>
-                ${chapter.title}
+                <div class="topic-item-left">
+                    <span class="topic-number">${chapter.id}</span>
+                    <span class="topic-title">${chapter.title}</span>
+                </div>
+                <div class="progress-tracker" data-chapter="${chapter.id}">
+                    <div class="progress-reset" data-chapter="${chapter.id}" title="Reset progress">×</div>
+                    ${[1, 2, 3, 4, 5].map(step =>
+                        `<div class="progress-step${step <= progress ? ' filled' : ''}" data-step="${step}"></div>`
+                    ).join('')}
+                </div>
             `;
             categoryDiv.appendChild(li);
         });
